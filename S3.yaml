@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Simple S3 Bucket with region and versioning
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Name of the S3 bucket
+
+  Region:
+    Type: String
+    Default: us-east-1
+    AllowedValues:
+      - us-east-1
+      - us-west-2
+      - eu-west-1
+      - ap-southeast-2
+    Description: AWS region for the bucket
+
+  EnableVersioning:
+    Type: String
+    Default: Enabled
+    AllowedValues:
+      - Enabled
+      - Suspended
+    Description: Enable or suspend versioning
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${BucketName}-${Region}"
+      VersioningConfiguration:
+        Status: !Ref EnableVersioning
+      Tags:
+        - Key: Team
+          Value: "{team}"
+        - Key: Project
+          Value: "{project}"
+        - Key: Environment
+          Value: "{env}"
+        - Key: Owner
+          Value: "{owner}"
+        - Key: Region
+          Value: "{region}"
+        - Key: ManagedBy
+          Value: "CloudPlatform"
+
+Outputs:
+  BucketName:
+    Value: !Ref S3Bucket
+
+  BucketArn:
+    Value: !GetAtt S3Bucket.Arn
+
+  ResourceArn:
+    Value: !GetAtt S3Bucket.Arn
